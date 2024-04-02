@@ -15,8 +15,8 @@ nextflow_process {
                 // define inputs of the process here. Example:
                 input[0] = [
                 [ id: 'k562.chr21' ],
-                    [ file('https://raw.githubusercontent.com/Danko-Lab/dREG/master/example/K562.chr21.plus.bw', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/Danko-Lab/dREG/master/example/K562.chr21.minus.bw', checkIfExists: true) ]
+                    file('https://raw.githubusercontent.com/Danko-Lab/dREG/master/example/K562.chr21.plus.bw', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/Danko-Lab/dREG/master/example/K562.chr21.minus.bw', checkIfExists: true)
                 ]
                 input[1] = file(
                     'https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata',
