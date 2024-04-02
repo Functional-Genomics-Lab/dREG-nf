@@ -7,6 +7,7 @@ params.assay_type = "groseq"
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 
 include { CUSTOM_GETCHROMSIZES } from './modules/nf-core/custom/getchromsizes/main'
+include { SAMTOOLS_SORT } from './modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_INDEX } from './modules/nf-core/samtools/index/main'
 
 include { DREG_PREP } from './modules/local/dreg_prep/main'
@@ -15,11 +16,12 @@ include { DREG_RUN } from './modules/local/dreg/main'
 workflow {
     ch_chrom_sizes = Channel.empty()
 
+    ch_fasta = file(params.fasta, checkIfExists: true)
+
     if (!params.sizes) {
         //
         // Create chromosome sizes file
         //
-        ch_fasta = Channel.fromPath(params.fasta)
         CUSTOM_GETCHROMSIZES ( ch_fasta.map { [ [:], it ] } )
         ch_fai         = CUSTOM_GETCHROMSIZES.out.fai.map { it[1] }
         ch_chrom_sizes = CUSTOM_GETCHROMSIZES.out.sizes.map { it[1] }
@@ -43,11 +45,9 @@ workflow {
             [ fmeta, fastq ]
         }
 
-    SAMTOOLS_INDEX (
-        ch_bam
-    )
-
-    ch_bam
+    SAMTOOLS_SORT ( ch_bam, ch_fasta )
+    SAMTOOLS_INDEX ( SAMTOOLS_SORT.out.bam )
+    SAMTOOLS_SORT.out.bam
         .join(SAMTOOLS_INDEX.out.bai, by: [0], remainder: true)
         .join(SAMTOOLS_INDEX.out.csi, by: [0], remainder: true)
         .map {
