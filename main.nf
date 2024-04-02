@@ -1,5 +1,23 @@
 #!/usr/bin/env nextflow
 
+include { validateParameters; paramsHelp; paramsSummaryLog; fromSamplesheet } from 'plugin/nf-validation'
+
+// Print help message, supply typical command line usage for the pipeline
+if (params.help) {
+   log.info paramsHelp("nextflow run funlab/dREG-nf --input input_file.csv")
+   exit 0
+}
+
+// TODO Validate input parameters
+// validateParameters()
+
+// Print summary of supplied parameters
+log.info paramsSummaryLog(workflow)
+
+// Create a new channel of metadata from a sample sheet
+// NB: `input` corresponds to `params.input` and associated sample sheet schema
+ch_input = Channel.fromSamplesheet("input")
+
 params.bams = null
 params.sizes = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.dict"
 params.fasta = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa"
@@ -57,14 +75,14 @@ workflow {
         .set { ch_bam_bai }
 
 
-    DREG_PREP (
-        ch_bam_bai,
-        ch_chrom_sizes,
-        params.assay_type
-    )
+    // DREG_PREP (
+    //     ch_bam_bai,
+    //     ch_chrom_sizes,
+    //     params.assay_type
+    // )
 
     DREG_RUN (
-        DREG_PREP.out.plus_bigwig.join(DREG_PREP.out.minus_bigwig, by: [0]),
+        ch_input,
         params.dreg_model
     )
 }

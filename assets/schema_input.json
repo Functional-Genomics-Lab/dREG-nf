@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "funlab/dREG-nf pipeline - params.input schema",
+  "description": "Schema for the file provided with params.input",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "sample": {
+        "type": "string",
+        "pattern": "^\\S+$",
+        "errorMessage": "Sample name must be provided and cannot contain spaces",
+        "meta": ["id"]
+      },
+      "plus_bw": {
+        "type": "string",
+        "pattern": "^\\S+\\.b(ig)?w(ig)?$",
+        "format": "file-path",
+        "errorMessage": "plus bigWig file cannot contain spaces and must have extension '.bw' or '.bigwig'"
+      },
+      "minus_bw": {
+        "type": "string",
+        "pattern": "^\\S+\\.b(ig)?w(ig)?$",
+        "format": "file-path",
+        "errorMessage": "minus bigWig file cannot contain spaces and must have extension '.bw' or '.bigwig'"
+      }
+    },
+    "required": ["sample", "plus_bw", "minus_bw"]
+  }
+}
