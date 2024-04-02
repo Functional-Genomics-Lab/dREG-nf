@@ -37,11 +37,7 @@ workflow {
             // Set meta.id
             fmeta.id = meta
             // Set meta.single_end
-            if (fastq.size() == 1) {
-                fmeta.single_end = true
-            } else {
-                fmeta.single_end = false
-            }
+            fmeta.single_end = true
             [ fmeta, fastq ]
         }
 
