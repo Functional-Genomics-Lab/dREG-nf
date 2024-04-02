@@ -9,6 +9,7 @@ process DREG_RUN {
 
     input:
     tuple val(meta), path(pos_bw), path(neg_bw)
+    path model
 
     output:
     tuple val(meta), path("${prefix}.*"), emit: dREG
@@ -20,7 +21,7 @@ process DREG_RUN {
         ${pos_bw} \\
         ${neg_bw} \\
         ${prefix} \\
-        ${params.dreg_train} \\
+        ${model} \\
         ${task.cpus} ${$task.accelerator.request}
     """
 }

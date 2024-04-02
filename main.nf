@@ -3,10 +3,11 @@
 params.bams = null
 params.sizes = null
 params.assay_type = "groseq"
+params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 
 include { CUSTOM_GETCHROMSIZES } from './modules/nf-core/custom/getchromsizes/main'
 include { DREG_PREP } from './modules/local/dreg_prep/main'
-include { DREG_RUN } from './modules/local/dreg_run/main'
+include { DREG_RUN } from './modules/local/dreg/main'
 
 workflow {
     ch_chrom_sizes = Channel.empty()
@@ -29,6 +30,8 @@ workflow {
         params.assay_type
     )
 
-    // DREG_RUN (
-    // )
+    DREG_RUN (
+        DREG_PREP.out.plus_bigwig.join(DREG_PREP.out.minus_bigwig, by: [0]),
+        params.dreg_model
+    )
 }
