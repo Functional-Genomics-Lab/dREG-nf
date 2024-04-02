@@ -15,7 +15,7 @@ process DREG_RUN {
     tuple val(meta), path("${prefix}.*"), emit: dREG
 
     script:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = "${meta.id}"
     """
     run_dREG.bsh \\
         ${pos_bw} \\
