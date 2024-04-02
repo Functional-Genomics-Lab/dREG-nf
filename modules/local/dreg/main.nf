@@ -1,32 +1,26 @@
 process dreg_run {
-    println "Log[6]: Running dREG"
-    println "Log[6]: N.B. Requires GPUs"
+    publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "*dREG*"
 
-    tag "$prefix"
+    tag "$meta.id"
     memory '50 GB'
     time '48h'
     cpus 4
-    queue 'titan'
-    clusterOptions '--gres=gpu'
-
-    publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "*dREG*"
-
-    when:
-    params.dreg
+    accelerator 1
 
     input:
-    tuple val(prefix), file(pos_bw), file(neg_bw) from dreg_bigwig
+    tuple val(meta), path(pos_bw), path(neg_bw)
 
     output:
-    tuple val(prefix), file ("${prefix}.*") into dREG_out
+    tuple val(meta), path("${prefix}.*"), emit: dREG
 
     script:
-        """
-        bash ${params.dreg_path} \
-	     ${pos_bw} \
-	     ${neg_bw} \
-	     ${prefix} \
-	     ${params.dreg_train} \
-	     4 1
-        """
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    bash ${params.dreg_path} \\
+        ${pos_bw} \\
+        ${neg_bw} \\
+        ${prefix} \\
+        ${params.dreg_train} \\
+        ${task.cpus} ${$task.accelerator.request}
+    """
 }
