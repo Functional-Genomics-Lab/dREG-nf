@@ -26,8 +26,23 @@ workflow {
         ch_chrom_sizes = file(params.sizes)
     }
 
+    ch_bam = Channel.fromFilePairs(params.bams, size: -1)
+        .map {
+            meta, fastq ->
+            def fmeta = [:]
+            // Set meta.id
+            fmeta.id = meta
+            // Set meta.single_end
+            if (fastq.size() == 1) {
+                fmeta.single_end = true
+            } else {
+                fmeta.single_end = false
+            }
+            [ fmeta, fastq ]
+        }
+
     DREG_PREP (
-        params.bams,
+        ch_bam,
         ch_chrom_sizes,
         params.assay_type
     )
