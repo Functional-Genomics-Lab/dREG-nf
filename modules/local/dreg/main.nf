@@ -22,6 +22,6 @@ process DREG_RUN {
         ${neg_bw} \\
         ${prefix} \\
         ${model} \\
-        ${task.cpus} ${$task.accelerator.request}
+        ${task.cpus} ${task.accelerator.request}
     """
 }
