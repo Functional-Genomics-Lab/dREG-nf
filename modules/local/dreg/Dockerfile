@@ -11,8 +11,6 @@ RUN git clone https://github.com/Danko-Lab/dREG \
 && make R_dependencies \
 && make dreg
 
-RUN wget https://github.com/Danko-Lab/dREG-Model/blob/master/asvm.mammal.RData\?raw\=true -O /lib/asvm.mammal.RData
-
 RUN cd ..
 RUN git clone https://github.com/bedops/bedops.git
 RUN cd bedops && make && make install && cp bin/* /usr/local/bin
