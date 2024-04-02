@@ -9,6 +9,11 @@
             "branch": "master",
             "git_sha": "1b0ffa4e5aed5b7e3cd4311af31bd3b2c8345051",
             "installed_by": ["modules"]
+          },
+          "samtools/index": {
+            "branch": "master",
+            "git_sha": "f4596fe0bdc096cf53ec4497e83defdb3a94ff62",
+            "installed_by": ["modules"]
           }
         }
       }

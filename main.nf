@@ -7,6 +7,8 @@ params.assay_type = "groseq"
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 
 include { CUSTOM_GETCHROMSIZES } from './modules/nf-core/custom/getchromsizes/main'
+include { SAMTOOLS_INDEX } from './modules/nf-core/samtools/index/main'
+
 include { DREG_PREP } from './modules/local/dreg_prep/main'
 include { DREG_RUN } from './modules/local/dreg/main'
 
@@ -41,8 +43,26 @@ workflow {
             [ fmeta, fastq ]
         }
 
+    SAMTOOLS_INDEX (
+        ch_bam
+    )
+
+    ch_bam
+        .join(SAMTOOLS_INDEX.out.bai, by: [0], remainder: true)
+        .join(SAMTOOLS_INDEX.out.csi, by: [0], remainder: true)
+        .map {
+            meta, bam, bai, csi ->
+                if (bai) {
+                    [ meta, bam, bai ]
+                } else {
+                    [ meta, bam, csi ]
+                }
+        }
+        .set { ch_bam_bai }
+
+
     DREG_PREP (
-        ch_bam,
+        ch_bam_bai,
         ch_chrom_sizes,
         params.assay_type
     )
