@@ -1,4 +1,4 @@
-process dreg_run {
+process DREG_RUN {
     publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "*dREG*"
 
     tag "$meta.id"
@@ -16,7 +16,7 @@ process dreg_run {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    bash ${params.dreg_path} \\
+    run_dREG.bsh \\
         ${pos_bw} \\
         ${neg_bw} \\
         ${prefix} \\
