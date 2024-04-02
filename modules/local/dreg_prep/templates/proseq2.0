@@ -19,9 +19,11 @@ echo "Writing bigWigs:"
 if [[ "$meta.single_end" == "true" ]]; then
     echo "SE"
     if [[ "$assay_type" == "GROseq" ]]; then
+        echo "GROseq"
         bedtools bamtobed -i $bam_file | se_1.awk | gzip >${prefix}.bed.gz
         #elif [[ "\${RNA3}" == "R1_5prime" && "\${OPP}" == "TRUE" ]] ; then  #like PRO-seq
     elif [[ "$assay_type" == "PROseq" ]]; then
+        echo "PROseq"
         bedtools bamtobed -i $bam_file | se_2.awk | gzip >${prefix}.bed.gz
     fi
 else
