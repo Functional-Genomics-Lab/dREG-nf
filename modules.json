@@ -1,0 +1,17 @@
+{
+  "name": "",
+  "homePage": "",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "custom/getchromsizes": {
+            "branch": "master",
+            "git_sha": "1b0ffa4e5aed5b7e3cd4311af31bd3b2c8345051",
+            "installed_by": ["modules"]
+          }
+        }
+      }
+    }
+  }
+}
