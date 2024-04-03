@@ -8,6 +8,7 @@ RUN apt-get update \
     bzip2 \
     make \
     libcurl4-gnutls-dev \
+    libpcre3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
