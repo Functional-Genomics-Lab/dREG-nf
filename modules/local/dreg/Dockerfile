@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:22.04
+FROM rocker/r-ver:4
+
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    r-base-core \
     # libssl1.0.0 \
     libssl-dev \
     bzip2 \
@@ -16,16 +16,30 @@ ADD --checksum=sha256:cbe2f6911e1455e4386160106f796eb54c6e2f8456467d4557f93ee135
     https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 \
     bedops_linux.tar.bz2
 
-RUN tar jxvf bedops_linux.tar.bz2
-RUN ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-
-ADD --checksum=sha256:ea508d763dc27d30d1a34f6a38d8da31ea67797d7b4971e8c10677bc48539565 \
-    https://github.com/Danko-Lab/dREG.git \
+ADD https://github.com/Functional-Genomics-Lab/dREG.git \
     dREG
 
 WORKDIR dREG
 
-RUN make R_dependencies
-RUN make dreg
+RUN install2.r --error --skipinstalled --ncpus -1 \
+    data.table \
+    e1071 \
+    mvtnorm \
+    parallel \
+    randomForest \
+    rmutil \
+    rphast \
+    snowfall \
+    && rm -rf /tmp/downloaded_packages \
+    && strip /usr/local/lib/R/site-library/*/libs/*.so
+
+RUN install2.r --error --skipinstalled --ncpus -1 \
+    dREG \
+    && rm -rf /tmp/downloaded_packages \
+    && strip /usr/local/lib/R/site-library/*/libs/*.so
+
 
 ENV PATH dREG/:$PATH:/usr/local/bin
+
+# RUN tar jxvf bedops_linux.tar.bz2 -C ./bedops
+# RUN cp -r bedops/bin/ /usr/bin/bedops
