@@ -1,6 +1,8 @@
 process DREG_RUN {
     publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "*dREG*"
 
+    container "ghcr.io/functional-genomics-lab/dreg-nf:latest"
+
     tag "$meta.id"
     memory '50 GB'
     time '48h'
