@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1
-FROM rocker/r-ver:4
+FROM rocker/tidyverse:3.6.0
 
+RUN sed -i s/deb.debian.org/archive.debian.org/g /etc/apt/sources.list
+RUN sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list
+RUN sed -i '/stretch-updates/d' /etc/apt/sources.list
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     # libssl1.0.0 \
@@ -28,6 +31,7 @@ ADD https://github.com/Functional-Genomics-Lab/dREG.git \
 WORKDIR dREG
 
 RUN install2.r --error --skipinstalled --ncpus -1 \
+    --repos http://cran.us.r-project.org --repos getOption \
     data.table \
     e1071 \
     mvtnorm \
