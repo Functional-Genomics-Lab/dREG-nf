@@ -46,6 +46,8 @@ RUN install2.r --error --skipinstalled --ncpus -1 \
     && rm -rf /tmp/downloaded_packages \
     && strip /usr/local/lib/R/site-library/*/libs/*.so
 
+RUN installGithub.r andrelmartins/bigWig/bigWig
+
 RUN R CMD INSTALL dREG --clean
 
 ENV PATH dREG/:$PATH:/usr/local/bin
