@@ -30,8 +30,7 @@ ADD --checksum=sha256:f4b88920419eb0a89d0bc5744af0416d92d112988702dc726882394128
 
 RUN R CMD INSTALL randomForest.tar.gz
 
-ADD https://github.com/Functional-Genomics-Lab/dREG.git \
-    dREG
+ADD https://github.com/Danko-Lab/dREG.git dREG
 
 WORKDIR dREG
 
