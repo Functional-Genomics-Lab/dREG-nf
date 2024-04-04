@@ -12,12 +12,16 @@ RUN apt-get update \
     make \
     libcurl4-gnutls-dev \
     libpcre3-dev \
+    libc6-dev \
+    build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ADD --checksum=sha256:cbe2f6911e1455e4386160106f796eb54c6e2f8456467d4557f93ee135c66ac8 \
-    https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 \
-    bedops_linux.tar.bz2
+ADD https://github.com/bedops/bedops.git bedops
+
+RUN make -C bedops
+RUN make install -C bedops
+RUN cd bedops && cp bin/* /usr/local/bin
 
 ADD --checksum=sha256:2fc5fdd4dcf26ddf44427318925a69a743e97cb88ccc4964c314fcf389403584 \
     https://cran.r-project.org/src/contrib/Archive/rphast/rphast_1.6.9.tar.gz \
