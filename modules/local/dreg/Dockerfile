@@ -2,6 +2,7 @@
 # Ideal would be 3.6.0 like they used for Bidirectional-Flow
 # https://github.com/Dowell-Lab/Bidirectional-Flow/blob/0e83e678b3321d9986e7eba9796d9c4828c01147/README.md?plain=1#L71
 FROM rocker/tidyverse:3.6.3-ubuntu18.04
+LABEL org.opencontainers.image.source https://github.com/Functional-Genomics-Lab/dREG-nf
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
