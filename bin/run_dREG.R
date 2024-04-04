@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 require(dREG)
 options("scipen" = 100, "digits" = 4)
 

@@ -19,13 +19,12 @@ process DREG_RUN {
     script:
     def prefix = "${meta.id}"
     """
-    R --vanilla --slave --args \\
+    run_dREG.R \\
         ${pos_bw} \\
         ${neg_bw} \\
         ${prefix} \\
         ${model} \\
         ${task.cpus} \\
-        ${task.accelerator.request} \\
-        < run_dREG.R
+        ${task.accelerator.request}
     """
 }
