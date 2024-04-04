@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript --vanilla
+#!/usr/local/bin/Rscript --vanilla --slave
 
 require(dREG)
 options("scipen" = 100, "digits" = 4)
