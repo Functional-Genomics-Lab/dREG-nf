@@ -4,9 +4,6 @@ process PROSEQ2 {
     label 'process_long'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-f01e242bdea19948f0576fdca94777242fe4c2cb:4238fb992d2a93e648108c86e3a9f51348e834a9-0' :
-        'biocontainers/mulled-v2-f01e242bdea19948f0576fdca94777242fe4c2cb:4238fb992d2a93e648108c86e3a9f51348e834a9-0' }"
 
     input:
     tuple val(meta), path(reads)
@@ -26,7 +23,7 @@ process PROSEQ2 {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     def reads_command = meta.single_end ? "-SE" : "-PE"
-    def required_se_options = meta.single_end ? assay_type == "GROseq": "-G" : "-P" : ""
+    def required_se_options = meta.single_end ? assay_type == "GROseq" ? "-G" : "-P" : ""
     // TODO PE
     """
     proseq2.0.bsh \\
