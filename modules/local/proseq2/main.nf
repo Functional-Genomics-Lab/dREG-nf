@@ -9,8 +9,9 @@ process PROSEQ2 {
         'biocontainers/mulled-v2-f01e242bdea19948f0576fdca94777242fe4c2cb:4238fb992d2a93e648108c86e3a9f51348e834a9-0' }"
 
     input:
-    tuple val(meta), path(bam_file), val(index)
-    path  sizes
+    tuple val(meta), path(reads)
+    path bwa_index
+    path chromInfo
     val assay_type
 
     output:
@@ -24,7 +25,16 @@ process PROSEQ2 {
 
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
+    def reads_command = meta.single_end ? "-SE" : "-PE"
+    def required_se_options = meta.single_end ? assay_type == "groseq": "-G" : "-P" : ""
+    // TODO PE
     """
-    proseq2.0.bsh
+    proseq2.0.bsh \\
+        $reads_command \\
+        -i $bwa_index \\
+        $reads \\
+        -I $prefix \\
+        $required_se_options \\
+        -4DREG
     """
 }

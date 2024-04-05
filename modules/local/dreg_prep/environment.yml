@@ -4,6 +4,11 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - bioconda::bedtools=2.31.1
-  - bioconda::ucsc-bedgraphtobigwig=445
-  - bioconda::samtools=1.16.1
+  - bioconda::cutadapt
+  - bioconda::fastx_trimmer
+  - bioconda::seqtk
+# - prinseq-lite.pl Just manually copied it. Couldn't tell if prinseq == prinseq-lite
+  - bioconda::bwa
+  - bioconda::samtools=1.9
+  - bioconda::bedtools=2.28.0
+  - bioconda::ucsc-bedgraphtobigwig
