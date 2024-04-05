@@ -31,9 +31,15 @@ include { SAMTOOLS_INDEX } from './modules/nf-core/samtools/index/main'
 include { DREG_PREP } from './modules/local/dreg_prep/main'
 include { DREG_RUN } from './modules/local/dreg/main'
 
-workflow {
+workflow dreg {
     DREG_RUN (
         ch_input,
         params.dreg_model
+    )
+}
+
+workflow {
+    PROSEQ2 (
+
     )
 }
