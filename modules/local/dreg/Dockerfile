@@ -1,10 +1,12 @@
 # syntax=docker/dockerfile:1
 # Ideal would be 3.6.0 like they used for Bidirectional-Flow
 # https://github.com/Dowell-Lab/Bidirectional-Flow/blob/0e83e678b3321d9986e7eba9796d9c4828c01147/README.md?plain=1#L71
-FROM rocker/tidyverse:3.6.3-ubuntu18.04
+FROM nvidia/cuda:12.3.2-devel-ubuntu22.04
+# FROM rocker/tidyverse:3.6.3-ubuntu18.04
 LABEL org.opencontainers.image.source https://github.com/Functional-Genomics-Lab/dREG-nf
 
-RUN apt-get update \
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
     # libssl1.0.0 \
     libssl-dev \
@@ -14,8 +16,17 @@ RUN apt-get update \
     libpcre3-dev \
     libc6-dev \
     build-essential \
+    r-base-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN Rscript -e 'install.packages("littler")'
+
+ADD --chmod=755 \
+    https://raw.githubusercontent.com/eddelbuettel/littler/master/inst/examples/installGithub.r \
+    /usr/bin/installGithub.r
+
+RUN installGithub.r Danko-lab/Rgtsvm/Rgtsvm
 
 ADD https://github.com/bedops/bedops.git bedops
 
