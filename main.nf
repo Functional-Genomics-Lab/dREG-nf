@@ -18,13 +18,19 @@ log.info paramsSummaryLog(workflow)
 // NB: `input` corresponds to `params.input` and associated sample sheet schema
 ch_input = Channel.fromSamplesheet("input")
 
+params.bwa_index = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/BWAIndex/version0.6.0/"
+params.chromInfo = "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/chromInfo.txt.gz"
+params.assay_type = "GROseq"
 params.sizes = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.dict"
 params.fasta = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa"
-params.assay_type = "GROseq"
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
+params.outdir = "results"
 
 workflow {
     PROSEQ2 (
-
+        ch_input,
+        params.bwa_index,
+        params.chromInfo,
+        params.assay_type,
     )
 }

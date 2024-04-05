@@ -26,7 +26,7 @@ process PROSEQ2 {
     script:
     prefix = task.ext.prefix ?: "${meta.id}"
     def reads_command = meta.single_end ? "-SE" : "-PE"
-    def required_se_options = meta.single_end ? assay_type == "groseq": "-G" : "-P" : ""
+    def required_se_options = meta.single_end ? assay_type == "GROseq": "-G" : "-P" : ""
     // TODO PE
     """
     proseq2.0.bsh \\
@@ -35,6 +35,7 @@ process PROSEQ2 {
         $reads \\
         -I $prefix \\
         $required_se_options \\
-        -4DREG
+        -4DREG \\
+        --thread=${task.cpus}
     """
 }
