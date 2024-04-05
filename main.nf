@@ -26,6 +26,8 @@ params.fasta = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Whole
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 params.outdir = "results"
 
+include { PROSEQ2 } from './modules/local/proseq2/main'
+
 workflow {
     PROSEQ2 (
         ch_input,
