@@ -17,6 +17,19 @@ log.info paramsSummaryLog(workflow)
 // Create a new channel of metadata from a sample sheet
 // NB: `input` corresponds to `params.input` and associated sample sheet schema
 ch_input = Channel.fromSamplesheet("input")
+        .map {
+            meta, fastq_1, fastq_2 ->
+                if (!fastq_2) {
+                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
+                } else {
+                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                }
+        }
+        .groupTuple()
+        .map {
+            meta, fastqs ->
+                return [ meta, fastqs.flatten() ]
+        }
 
 params.bwa_index = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/BWAIndex/version0.6.0/"
 params.chromInfo = "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/chromInfo.txt.gz"
