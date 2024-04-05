@@ -64,15 +64,6 @@ cat("CPU cores:", cpu_cores, "\n")
 cat("GPU ID:", gpu_id, "\n")
 cat("Using Rgtsvm:", use_rgtsvm, "\n")
 cat("-------------------------------------\n ")
-if (!file.exists(ps_plus_path)) {
-  stop(paste("Can't find the bigwig of plus strand(", ps_plus_path, ")"))
-}
-if (!file.exists(ps_minus_path)) {
-  stop(paste("Can't find the bigwig of minus strand(", ps_minus_path, ")"))
-}
-if (!file.exists(args[4])) {
-  stop(paste("Can't find the SVR model(", args[4], ")"))
-}
 ## Load the dRGE model including two ojects 'asvm' and 'gdm'.
 ## Do this before loading ps_plus_path, just in case those are saved in the model file.
 ## Should have (by default) gdm and asvm.
