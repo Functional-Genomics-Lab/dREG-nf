@@ -26,10 +26,6 @@ ch_input = Channel.fromSamplesheet("input")
                 }
         }
         .groupTuple()
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
 
 params.bwa_index = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/BWAIndex/version0.6.0/"
 params.chromInfo = "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/chromInfo.txt.gz"
