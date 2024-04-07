@@ -30,7 +30,6 @@ process PROSEQ2 {
         $reads_command \\
         -i $bwa_index \\
         -c $chromInfo \\
-        $reads \\
         -I $prefix \\
         $required_se_options \\
         -4DREG \\
