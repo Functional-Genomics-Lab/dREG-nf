@@ -26,6 +26,13 @@ ch_input = Channel.fromSamplesheet("input")
                 }
         }
         .groupTuple()
+        .map {
+            validateInputSamplesheet(it)
+        }
+        .map {
+            meta, fastqs ->
+                return [ meta, fastqs.flatten() ]
+        }
 
 params.bwa_index = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/BWAIndex/version0.6.0/"
 params.chromInfo = "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/chromInfo.txt.gz"
@@ -44,4 +51,19 @@ workflow {
         params.chromInfo,
         params.assay_type,
     )
+}
+
+//
+// Validate channels from input samplesheet
+//
+def validateInputSamplesheet(input) {
+    def (metas, fastqs) = input[1..2]
+
+    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
+    def endedness_ok = metas.collect{ it.single_end }.unique().size == 1
+    if (!endedness_ok) {
+        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+    }
+
+    return [ metas[0], fastqs ]
 }
