@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - bioconda::cutadapt
-  - bioconda::fastx_trimmer
+  - bioconda::fastx_toolkit
   - bioconda::seqtk
   # NOTE Technically the script says 0.20.2, I installed 0.20.4
   # - prinseq-lite.pl Just manually copied it. Couldn't tell if prinseq == prinseq-lite
