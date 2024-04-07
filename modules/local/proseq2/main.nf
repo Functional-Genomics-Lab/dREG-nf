@@ -29,6 +29,7 @@ process PROSEQ2 {
     proseq2.0.bsh \\
         $reads_command \\
         -i $bwa_index \\
+        -c $chromInfo \\
         $reads \\
         -I $prefix \\
         $required_se_options \\
