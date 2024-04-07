@@ -26,6 +26,8 @@ process PROSEQ2 {
     def required_se_options = meta.single_end ? assay_type == "GROseq" ? "-G" : "-P" : ""
     // TODO PE
     """
+    mv $reads ${prefix}.fastq.gz
+
     proseq2.0.bsh \\
         $reads_command \\
         -i $bwa_index \\
