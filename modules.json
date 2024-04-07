@@ -1,34 +1,33 @@
 {
-    "name": "",
-    "homePage": "",
-    "repos": {
-        "https://github.com/nf-core/modules.git": {
-            "modules": {
-                "nf-core": {
-                    "custom/getchromsizes": {
-                        "branch": "master",
-                        "git_sha": "1b0ffa4e5aed5b7e3cd4311af31bd3b2c8345051",
-                        "installed_by": [
-                            "modules"
-                        ]
-                    },
-                    "samtools/index": {
-                        "branch": "master",
-                        "git_sha": "f4596fe0bdc096cf53ec4497e83defdb3a94ff62",
-                        "installed_by": [
-                            "modules"
-                        ]
-                    },
-                    "samtools/sort": {
-                        "branch": "master",
-                        "git_sha": "4352dbdb09ec40db71e9b172b97a01dcf5622c26",
-                        "installed_by": [
-                            "modules"
-                        ],
-                        "patch": "modules/nf-core/samtools/sort/samtools-sort.diff"
-                    }
-                }
-            }
+  "name": "",
+  "homePage": "",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "cat/fastq": {
+            "branch": "master",
+            "git_sha": "0997b47c93c06b49aa7b3fefda87e728312cf2ca",
+            "installed_by": ["modules"]
+          },
+          "custom/getchromsizes": {
+            "branch": "master",
+            "git_sha": "1b0ffa4e5aed5b7e3cd4311af31bd3b2c8345051",
+            "installed_by": ["modules"]
+          },
+          "samtools/index": {
+            "branch": "master",
+            "git_sha": "f4596fe0bdc096cf53ec4497e83defdb3a94ff62",
+            "installed_by": ["modules"]
+          },
+          "samtools/sort": {
+            "branch": "master",
+            "git_sha": "4352dbdb09ec40db71e9b172b97a01dcf5622c26",
+            "installed_by": ["modules"],
+            "patch": "modules/nf-core/samtools/sort/samtools-sort.diff"
+          }
         }
+      }
     }
+  }
 }

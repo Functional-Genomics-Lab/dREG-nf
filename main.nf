@@ -29,9 +29,12 @@ ch_input = Channel.fromSamplesheet("input")
         .map {
             validateInputSamplesheet(it)
         }
-        .map {
+        .branch {
             meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
+                single  : fastqs.size() == 1
+                    return [ meta, fastqs.flatten() ]
+                multiple: fastqs.size() > 1
+                    return [ meta, fastqs.flatten() ]
         }
 
 params.bwa_index = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/BWAIndex/version0.6.0/"
@@ -43,10 +46,15 @@ params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.g
 params.outdir = "results"
 
 include { PROSEQ2 } from './modules/local/proseq2/main'
+include { CAT_FASTQ } from './modules/nf-core/cat/fastq/main'
 
 workflow {
+    CAT_FASTQ ( ch_input.multiple ).reads
+        .mix(ch_input.single)
+        .set { ch_cat_fastq }
+
     PROSEQ2 (
-        ch_input,
+        ch_cat_fastq,
         params.bwa_index,
         params.chromInfo,
         params.assay_type,
