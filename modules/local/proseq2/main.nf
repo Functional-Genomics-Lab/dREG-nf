@@ -27,6 +27,7 @@ process PROSEQ2 {
     // TODO PE
     """
     mv $reads ${prefix}.fastq.gz
+    mkdir tmp
 
     proseq2.0.bsh \\
         $reads_command \\
@@ -35,6 +36,7 @@ process PROSEQ2 {
         -I $prefix \\
         $required_se_options \\
         -4DREG \\
-        --thread=${task.cpus}
+        --thread=${task.cpus} \\
+        -T ./tmp
     """
 }
