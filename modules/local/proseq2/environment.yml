@@ -7,7 +7,7 @@ dependencies:
   - bioconda::cutadapt
   - bioconda::fastx_toolkit
   - bioconda::seqtk
-  - bioconda::prinseq=0.20.2
+  - bioconda::prinseq # FIXME =0.20.2
   - bioconda::bwa
   - bioconda::samtools=1.9
   - bioconda::bedtools>=2.28.0
