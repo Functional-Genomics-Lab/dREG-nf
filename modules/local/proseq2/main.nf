@@ -39,6 +39,7 @@ process PROSEQ2 {
         $required_se_options \\
         -4DREG \\
         --thread=${task.cpus} \\
-        -T ./tmp
+        -T ./tmp \\
+        -O results
     """
 }
