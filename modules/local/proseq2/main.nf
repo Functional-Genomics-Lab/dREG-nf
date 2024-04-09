@@ -26,12 +26,14 @@ process PROSEQ2 {
     def required_se_options = meta.single_end ? assay_type == "GROseq" ? "-G" : "-P" : ""
     // TODO PE
     """
+    INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
+
     mv $reads ${prefix}.fastq.gz
     mkdir tmp
 
     proseq2.0.bsh \\
         $reads_command \\
-        -i $bwa_index \\
+        -i \$INDEX \\
         -c $chromInfo \\
         -I $prefix \\
         $required_se_options \\
