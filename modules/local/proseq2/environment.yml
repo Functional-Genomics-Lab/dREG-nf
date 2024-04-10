@@ -9,7 +9,7 @@ dependencies:
   - bioconda::seqtk
   - bioconda::prinseq # FIXME =0.20.2
   - bioconda::bwa
-  - bioconda::samtools=1.9
+  - bioconda::samtools
   - bioconda::bedtools>=2.28.0
   - bioconda::ucsc-bedgraphtobigwig
   - bioconda::bedops
