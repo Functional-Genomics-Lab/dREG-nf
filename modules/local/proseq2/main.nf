@@ -3,6 +3,8 @@ process PROSEQ2 {
     label 'process_high'
     label 'process_long'
 
+    errorStrategy 'finish'
+
     conda "${moduleDir}/environment.yml"
 
     input:
