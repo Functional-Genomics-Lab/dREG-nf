@@ -45,18 +45,26 @@ params.fasta = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Whole
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 params.outdir = "results"
 
-include { PROSEQ2 } from './modules/local/proseq2/main'
 include { CAT_FASTQ } from './modules/nf-core/cat/fastq/main'
+include { GUNZIP } from './modules/nf-core/gunzip/main'
+include { PROSEQ2 } from './modules/local/proseq2/main'
 
 workflow {
     CAT_FASTQ ( ch_input.multiple ).reads
         .mix(ch_input.single)
         .set { ch_cat_fastq }
 
+    ch_chromInfo = Channel.empty()
+    if (params.chromInfo.endsWith('.gz')) {
+        ch_chromInfo = GUNZIP ( [ [:], file(params.chromInfo) ] ).gunzip.map { it[1] }
+    } else {
+        ch_chromInfo = Channel.fromPath(file(params.chromInfo))
+    }
+
     PROSEQ2 (
         ch_cat_fastq,
         params.bwa_index,
-        params.chromInfo,
+        ch_chromInfo,
         params.assay_type,
     )
 }
