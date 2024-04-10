@@ -878,7 +878,7 @@ if [[ "$SEQ" == "SE" ]]; then
     for name in ${FQ_INPUT[@]}; do
         old_name=${name}
         name=$(echo ${old_name} | rev | cut -d \/ -f 1 | rev)
-        ## read stats
+        echo "read stats"
         echo ${old_name} >${TMPDIR}/${name}.QC.log
         echo 'Number of original input reads:' >>${TMPDIR}/${name}.QC.log
         zcat ${old_name}.fastq.gz | grep @ -c >>${TMPDIR}/${name}.QC.log
@@ -899,8 +899,9 @@ if [[ "$SEQ" == "SE" ]]; then
 
         rm ${TMPDIR}/${name}_trim.fastq ${TMPDIR}/${name}_untrim.fastq ${TMPDIR}/${name}_q20trim.fastq ${TMPDIR}/${name}_trim.${n2}Nremoved.fastq
 
-        ## Collapse reads using prinseq-lite.pl. if there are UMI barcodes
+        echo "Collapse reads using prinseq-lite.pl. if there are UMI barcodes"
         if [[ ${UMI2} != 0 || ${UMI1} != 0 ]]; then
+            echo "case 1"
             # Remove PCR duplciates.
             # fastq with the first dedup_L nt
             cat ${TMPDIR}/noadapt/${name}_noadapt.fastq | fastx_trimmer -Q33 -l ${dedup_L} -o ${TMPDIR}/noadapt/l${dedup_L}/${name}_noadapt_l${dedup_L}.fastq
@@ -925,6 +926,7 @@ if [[ "$SEQ" == "SE" ]]; then
             cat ${TMPDIR}/passQC/${name}_dedup_QC_end.fastq | grep @ -c >>${TMPDIR}/${name}.QC.log
 
         elif [[ ${Force_deduplicate} == "TRUE" ]]; then
+            echo "case 2"
             # Remove PCR duplciates.
             prinseq-lite.pl -derep 1 -fastq ${TMPDIR}/noadapt/${name}_noadapt.fastq -out_format 3 -out_bad null -out_good ${TMPDIR}/passQC/${name}_dedup_withBarcode 2>${OUTPUT}/${name}.prinseq-pcrDups.gd
             # trim the UMI and additional barcode after dereplicate
@@ -936,10 +938,10 @@ if [[ "$SEQ" == "SE" ]]; then
             cat ${TMPDIR}/passQC/${name}_dedup_QC_end.fastq | grep @ -c >>${TMPDIR}/${name}.QC.log
         else
             # trim the additional barcode WITHOUT dereplicate. If no barcode, prinseq-lite.pl will remove unpair reads and reads that are length 0
+            echo "trim the additional barcode WITHOUT dereplicate."
             prinseq-lite.pl -trim_left ${ADD_B1} -fastq ${TMPDIR}/noadapt/${name}_noadapt.fastq -out_format 3 -out_bad null -out_good ${TMPDIR}/passQC/${name}_BarcodeRemoved 2>>${OUTPUT}/${name}.prinseq-pcrDups.gd
             # min_len 15
             prinseq-lite.pl -min_len 15 -fastq ${TMPDIR}/passQC/${name}_BarcodeRemoved.fastq -out_format 3 -out_bad null -out_good ${TMPDIR}/passQC/${name}_QC_end 2>${OUTPUT}/${name}.prinseq-pcrDups.gd
-            rm ${TMPDIR}/passQC/${name}_BarcodeRemoved.fastq
             echo 'Number of reads after final QC:' >>${TMPDIR}/${name}.QC.log
             cat ${TMPDIR}/passQC/${name}_QC_end.fastq | grep @ -c >>${TMPDIR}/${name}.QC.log
         fi
@@ -957,7 +959,6 @@ if [[ "$SEQ" == "SE" ]]; then
     fi
 
     ## Cleanup.
-    rm -r ${TMPDIR}/noadapt
     gzip ${TMPDIR}/passQC*/*.fastq
 
     #############################################
