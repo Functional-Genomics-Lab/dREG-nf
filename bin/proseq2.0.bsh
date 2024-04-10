@@ -1070,7 +1070,7 @@ if [[ "$SEQ" == "SE" ]]; then
     for f in ${TMPDIR}/*.sort.bam; do
         #*/
         j=$(echo $f | awk -F"/" '{print $NF}' | rev | cut -d \. -f 3- | rev)
-        echo $j >${OUTPUT}/${j}.align.log
+        echo $j
 
         # in SE, MAP5 alwasys TRUE
 
@@ -1086,20 +1086,20 @@ if [[ "$SEQ" == "SE" ]]; then
                 awk 'BEGIN{OFS="\t"} ($6 == "+") {print $1,$2,$2+1,$4,$5,"-"}; ($6 == "-") {print $1,$3-1,$3,$4,$5,"+"}' | gzip >${TMPDIR}/$j.bed.gz
         fi
 
-        echo 'Number of mappable reads:' >>${OUTPUT}/${j}.align.log
-        readCount=$(zcat ${TMPDIR}/$j.bed.gz | grep "" -c)
-        echo ${readCount} >>${OUTPUT}/${j}.align.log
+        echo 'Number of mappable reads:'
+        readCount=$(zcat ${TMPDIR}/$j.bed.gz | wc -l)
+        echo ${readCount}
 
-        ## Remove rRNA and reverse the strand (PRO-seq).
+        echo "Remove rRNA and reverse the strand (PRO-seq)."
         zcat ${TMPDIR}/$j.bed.gz | grep "rRNA\|chrM" -v | grep "_" -v | sort-bed - | gzip >${TMPDIR}/$j.nr.rs.bed.gz
-        echo 'Number of mappable reads (excluding rRNA):' >>${OUTPUT}/${j}.align.log
-        echo $(zcat ${TMPDIR}/$j.nr.rs.bed.gz | grep "" -c) >>${OUTPUT}/${j}.align.log
+        echo 'Number of mappable reads (excluding rRNA):'
+        echo $(zcat ${TMPDIR}/$j.nr.rs.bed.gz | wc -l)
 
-        ## Convert to bedGraph ... Cannot gzip these, unfortunately.
+        echo "Convert to bedGraph ... Cannot gzip these, unfortunately."
         bedtools genomecov -bg -i ${TMPDIR}/$j.nr.rs.bed.gz -g ${CHINFO} -strand + >${TMPDIR}/$j\_plus.bedGraph
         bedtools genomecov -bg -i ${TMPDIR}/$j.nr.rs.bed.gz -g ${CHINFO} -strand - >${TMPDIR}/$j\_minus.noinv.bedGraph
 
-        ## Invert minus strand.
+        echo "Invert minus strand."
         cat ${TMPDIR}/$j\_minus.noinv.bedGraph | awk 'BEGIN{OFS="\t"} {print $1,$2,$3,-1*$4}' >${TMPDIR}/$j\_minus.bedGraph ## Invert read counts on the minus strand.
 
         ## normalized by RPM
@@ -1124,5 +1124,4 @@ echo "" >>${OUTPUT}/proseq2.0_read_report_${tmp}.log
 echo "Mapping" >>${OUTPUT}/proseq2.0_read_report_${tmp}.log
 for f in ${TMPDIR}/*.sort.bam; do
     j=$(echo $f | awk -F"/" '{print $NF}' | rev | cut -d \. -f 3- | rev)
-    cat ${OUTPUT}/${j}.align.log >>${OUTPUT}/proseq2.0_read_report_${tmp}.log
 done
