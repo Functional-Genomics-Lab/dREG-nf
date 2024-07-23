@@ -48,6 +48,7 @@ params.outdir = "results"
 include { CAT_FASTQ } from './modules/nf-core/cat/fastq/main'
 include { GUNZIP } from './modules/nf-core/gunzip/main'
 include { PROSEQ2 } from './modules/local/proseq2/main'
+include { DREG_RUN } from './modules/local/dreg'
 
 workflow {
     CAT_FASTQ ( ch_input.multiple ).reads
@@ -66,6 +67,12 @@ workflow {
         params.bwa_index,
         ch_chromInfo,
         params.assay_type,
+    )
+
+    ch_plus_minus_bw = PROSEQ2.out.plus_bigwig.join(PROSEQ2.out.minus_bigwig, by: [0])
+    DREG_RUN (
+        ch_plus_minus_bw,
+        params.dreg_model,
     )
 }
 
