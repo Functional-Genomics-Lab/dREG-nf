@@ -1,71 +1,28 @@
-# syntax=docker/dockerfile:1
-# Ideal would be 3.6.0 like they used for Bidirectional-Flow
-# https://github.com/Dowell-Lab/Bidirectional-Flow/blob/0e83e678b3321d9986e7eba9796d9c4828c01147/README.md?plain=1#L71
-FROM nvidia/cuda:12.3.2-devel-ubuntu22.04
-# FROM rocker/tidyverse:3.6.3-ubuntu18.04
-LABEL org.opencontainers.image.source https://github.com/Functional-Genomics-Lab/dREG-nf
-
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends \
-    # libssl1.0.0 \
-    libssl-dev \
-    bzip2 \
-    make \
-    libcurl4-gnutls-dev \
-    libpcre3-dev \
-    libc6-dev \
-    build-essential \
-    r-base-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN Rscript -e 'install.packages("littler")'
-
-ADD --chmod=755 \
-    https://raw.githubusercontent.com/eddelbuettel/littler/master/inst/examples/installGithub.r \
-    /usr/bin/installGithub.r
-
-RUN installGithub.r Danko-lab/Rgtsvm/Rgtsvm
-
-ADD https://github.com/bedops/bedops.git bedops
-
-RUN make -C bedops
-RUN make install -C bedops
-RUN cd bedops && cp bin/* /usr/local/bin
-
-ADD --checksum=sha256:2fc5fdd4dcf26ddf44427318925a69a743e97cb88ccc4964c314fcf389403584 \
-    https://cran.r-project.org/src/contrib/Archive/rphast/rphast_1.6.9.tar.gz \
-    rphast.tar.gz
-
-RUN R CMD INSTALL rphast.tar.gz
-
-ADD --checksum=sha256:f4b88920419eb0a89d0bc5744af0416d92d112988702dc726882394128a8754d \
-    https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz \
-    randomForest.tar.gz
-
-RUN R CMD INSTALL randomForest.tar.gz
-
-ADD https://github.com/Danko-Lab/dREG.git dREG
-
-WORKDIR dREG
-
-RUN install2.r --error --skipinstalled --ncpus -1 \
-    --repos http://cran.us.r-project.org --repos getOption \
-    data.table \
-    e1071 \
-    mvtnorm \
-    parallel \
-    rmutil \
-    snowfall \
-    && rm -rf /tmp/downloaded_packages \
-    && strip /usr/local/lib/R/site-library/*/libs/*.so
-
-RUN installGithub.r andrelmartins/bigWig/bigWig
-
-RUN R CMD INSTALL dREG --clean
-
-ENV PATH dREG/:$PATH:/usr/local/bin
-
-# RUN tar jxvf bedops_linux.tar.bz2 -C ./bedops
-# RUN cp -r bedops/bin/ /usr/bin/bedops
+ADD file ... in /
+CMD ["bash"]
+ENV R_VERSION=4.0.5
+ENV R_HOME=/usr/local/lib/R
+ENV TZ=Etc/UTC
+COPY scripts/install_R_source.sh /rocker_scripts/install_R_source.sh # buildkit
+RUN /bin/sh -c /rocker_scripts/install_R_source.sh #
+ENV CRAN=https://packagemanager.rstudio.com/cran/__linux__/focal/2021-05-17
+ENV LANG=en_US.UTF-8
+COPY scripts /rocker_scripts # buildkit
+RUN /bin/sh -c /rocker_scripts/setup_R.sh #
+CMD ["R"]
+LABEL org.opencontainers.image.licenses=GPL-2.0-or-later org.opencontainers.image.source=https://github.com/rocker-org/rocker-versioned2 org.opencontainers.image.vendor=Rocker Project
+ENV CUDA_VERSION=11.1
+ENV NCCL_VERSION=2.7.8
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA=cuda>=11.1 brand=tesla,driver>=418,driver<419 brand=tesla,driver>=440,driver<441 brand=tesla,driver>=450,driver<451
+ENV CUDA_HOME=/usr/local/cuda
+ENV LD_LIBRARY_PATH=:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64/libnvblas.so:
+ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+ENV NVBLAS_CONFIG_FILE=/etc/nvblas.conf
+ENV PYTHON_CONFIGURE_OPTS=--enable-shared
+ENV RETICULATE_MINICONDA_ENABLED=FALSE
+ENV PATH=/usr/local/cuda/bin:/usr/local/nviida/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/texlive/bin/linux
+RUN /bin/sh -c /rocker_scripts/install_cuda-11.1.sh
+RUN /bin/sh -c /rocker_scripts/config_R_cuda.sh
+RUN /bin/sh -c /rocker_scripts/install_python.sh
