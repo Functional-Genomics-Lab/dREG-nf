@@ -42,6 +42,7 @@ params.chromInfo = "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/database/chr
 params.assay_type = "GROseq"
 params.sizes = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.dict"
 params.fasta = "s3://ngi-igenomes/igenomes/Homo_sapiens/UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa"
+params.run_dreg = false
 params.dreg_model = "https://dreg.dnasequence.org/themes/dreg/assets/file/asvm.gdm.6.6M.20170828.rdata"
 params.outdir = "results"
 
@@ -69,11 +70,13 @@ workflow {
         params.assay_type,
     )
 
-    ch_plus_minus_bw = PROSEQ2.out.plus_bigwig.join(PROSEQ2.out.minus_bigwig, by: [0])
-    DREG_RUN (
-        ch_plus_minus_bw,
-        params.dreg_model,
-    )
+    if(params.run_dreg) {
+        ch_plus_minus_bw = PROSEQ2.out.plus_bigwig.join(PROSEQ2.out.minus_bigwig, by: [0])
+        DREG_RUN (
+            ch_plus_minus_bw,
+            params.dreg_model,
+        )
+    }
 }
 
 //
