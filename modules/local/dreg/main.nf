@@ -1,7 +1,7 @@
 process DREG_RUN {
-    publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "*dREG*"
+    publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "dREG_output_*"
 
-    container "docker.io/biohpc/dreg"
+    container "${moduleDir}/choose_dreg_image.sh".execute().text.trim()
 
     tag "$meta.id"
     memory '50 GB'
@@ -14,17 +14,17 @@ process DREG_RUN {
     path model
 
     output:
-    tuple val(meta), path("${prefix}.*"), emit: dREG
+    tuple val(meta), path("dREG_output_*"), emit: dREG
 
     script:
-    def prefix = "${meta.id}"
+    def prefix = "dREG_output_${meta.id}_"
     """
-    run_dREG.R \\
+    /dREG/run_dREG.R \\
         ${pos_bw} \\
         ${neg_bw} \\
         ${prefix} \\
         ${model} \\
         ${task.cpus} \\
-        ${task.accelerator.request}
+        0
     """
 }
