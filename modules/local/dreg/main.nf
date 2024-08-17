@@ -1,7 +1,7 @@
 process DREG_RUN {
     publishDir "${params.outdir}/dreg/", mode: 'copy', pattern: "dREG_output_*"
 
-    container "${moduleDir}/choose_dreg_image.sh".execute().text.trim()
+    container "docker.io/l1drm/dreg:cuda${params.cuda}"
 
     tag "$meta.id"
     memory '50 GB'
