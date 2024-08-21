@@ -1,0 +1,221 @@
+digraph G {
+    compound=true;
+    rankdir=TB;
+
+    subgraph subg_step_1 {
+        step_1 [label="S1: SRA Dump", shape=box, fillcolor=orange, style=filled];
+        
+        sra [label="sra_reads 'read_files_sra'", shape=diamond, fillcolor=orange, style=filled];
+        
+        sra -> step_1;
+
+        "fastq"[shape=diamond, fillcolor=green, style=filled];
+        step_1 -> "fastq";
+    }
+
+    subgraph subg_step_1p {
+        "S1p: FastQC" [label="S1p: FastQC", shape=box];
+
+        "fastqc"[shape=diamond, label="fastqc 'fastqc_results'"];
+
+        "fastq" -> "S1p: FastQC";
+
+        "S1p: FastQC" -> "fastqc";
+
+    }
+
+    subgraph subg_step_2 {
+        s2_hisat2 [label="S2: HISAT2", shape=box, fillcolor=green, style=filled];
+
+        hisat2_indices [shape=diamond, fillcolor=green, style=filled];
+
+        hisat2_indices -> s2_hisat2;
+        fastq -> s2_hisat2;
+
+        trimmed_reads_fastqc [label="trimmed_reads_fastqc", shape=diamond];
+        hisat2_sam [label="hisat2_sam", shape=diamond, fillcolor=green, style=filled];
+
+        s2_hisat2 -> trimmed_reads_fastqc;
+        s2_hisat2 -> hisat2_sam;
+    }
+
+    subgraph subg_step2p {
+        "S2p: FastQC" [label="S2p: FastQC", shape=box, fillcolor=green, style=filled];
+
+        "fastqc2"[shape=diamond, label="fastqc 'fastqc_results'", fillcolor=green, style=filled];
+
+        "s2_hisat2" -> "S2p: FastQC";
+
+        "S2p: FastQC" -> "fastqc2";
+    }
+
+    subgraph subg_step_3 {
+        s3_samtools [label="S3: Samtools", shape=box, fillcolor=green, style=filled];
+
+        sorted_bam_ch [label="sorted_bam_ch", shape=diamond, fillcolor=green, style=filled];
+        cram_ch [label="cram_ch", shape=diamond, fillcolor=green, style=filled];
+        millions_mapped [label="millions_mapped", shape=diamond, fillcolor=green, style=filled];
+
+        s3_samtools -> sorted_bam_ch;
+        s3_samtools -> cram_ch;
+        s3_samtools -> millions_mapped;
+        hisat2_sam -> s3_samtools;
+    }
+
+    subgraph subg_step_4 {
+        s4_picard [label="S4: Picard", shape=box];
+
+        sorted_bam_ch -> s4_picard;
+
+        picard_metrics [label="picard_metrics", shape=diamond];
+        s4_picard -> picard_metrics;
+    }
+
+    subgraph subg_step_4p {
+        s4p_preseq [label="S4p: Preseq", shape=box];
+
+        sorted_bam_ch -> s4p_preseq;
+
+        preseq_results [label="preseq_results", shape=diamond];
+        
+        s4p_preseq -> preseq_results;
+    }
+
+    subgraph subg_step_4pp {
+        s4pp_rseqc [label="S4pp: RSeQC", shape=box];
+
+        sorted_bam_ch -> s4pp_rseqc;
+
+        rseqc_results [label="rseqc_results", shape=diamond];
+        
+        s4pp_rseqc -> rseqc_results;
+    }
+
+    subgraph subg_step_4ppp {
+        s4ppp_pileup [label="S4ppp: Pileup", shape=box];
+
+        sorted_bam_ch -> s4ppp_pileup;
+
+        pileup_results [label="pileup_results", shape=diamond];
+
+        s4ppp_pileup -> pileup_results;
+    }
+
+    subgraph subg_step_5 {
+        s5_bedgraphs [label="S5: Bedgraphs", shape=box];
+
+        sorted_bam_ch -> s5_bedgraphs;
+        millions_mapped -> s5_bedgraphs;
+
+        bedgraph_results [label="bedgraph_results", shape=diamond];
+
+        s5_bedgraphs -> bedgraph_results;
+    }
+
+    subgraph subg_step_5p {
+        s5p_bigwig [label="S5p: BigWig", shape=box, fillcolor=green, style=filled];
+
+        cram_ch -> s5p_bigwig;
+
+        chrom_sizes [shape=diamond, fillcolor=green, style=filled];
+
+        chrom_sizes -> s5p_bigwig;
+    }
+
+    subgraph subg_step_5pp {
+        s5pp_normalize_bigwig [label="S5pp: Normalize BigWig", shape=box];
+
+        s5p_bigwig -> s5pp_normalize_bigwig;
+        chrom_sizes -> s5pp_normalize_bigwig;
+
+        normalized_bigwig [label="normalized_bigwig", shape=diamond];
+
+        s5pp_normalize_bigwig -> normalized_bigwig;
+    }
+
+    subgraph subg_step_5ppp {
+        s5ppp_igv [label="S5ppp: IGV", shape=box];
+
+        normalized_bigwig -> s5ppp_igv;
+        bedgraph_results -> s5ppp_igv;
+
+        tiled_data_ch [label="tiled_data_ch", shape=diamond];
+
+        s5ppp_igv -> tiled_data_ch;
+    }
+
+    subgraph subg_step_6 {
+        s6_multiqc [label="S6: MultiQC", shape=box];
+
+        fastqc -> s6_multiqc;
+        trimmed_reads_fastqc -> s6_multiqc;
+        fastqc2 -> s6_multiqc;
+        picard_metrics -> s6_multiqc;
+        preseq_results -> s6_multiqc;
+        rseqc_results -> s6_multiqc;
+        pileup_results -> s6_multiqc;
+        bedgraph_results -> s6_multiqc;
+        normalized_bigwig -> s6_multiqc;
+        tiled_data_ch -> s6_multiqc;
+
+        multiqc_report [label="multiqc_report", shape=diamond];
+
+        s6_multiqc -> multiqc_report;
+    }
+
+    subgraph subg_step_7 {
+        s7_fstitch [label="S7: FStitch", shape=box];
+
+        bedgraph_results -> s7_fstitch;
+
+        fstitch_results [label="fstitch_results", shape=diamond];
+        fstitch_bidir_bed [label="fstitch_bidir_bed", shape=diamond];
+
+        s7_fstitch -> fstitch_results;
+        s7_fstitch -> fstitch_bidir_bed;
+    }
+
+    subgraph subg_step_8 {
+        s8_tfit [label="S8: TFIT", shape=box];
+
+        bedgraph_results -> s8_tfit;
+        fstitch_bidir_bed -> s8_tfit;
+
+        tfit_bed [label="tfit_bed", shape=diamond];
+
+        s8_tfit -> tfit_bed;
+    }
+
+    subgraph subg_step_10 {
+        s10_multicov [label="S10: MultiCov", shape=box];
+
+        cram_ch -> s10_multicov;
+
+        multicov_count_bed [label="multicov_count_bed", shape=diamond];
+
+        s10_multicov -> multicov_count_bed;
+    }
+
+    subgraph subg_step_10p {
+        s10p_merge_multicov [label="S10p: Merge MultiCov", shape=box];
+
+        multicov_count_bed -> s10p_merge_multicov;
+
+        merged_multicov [label="merged_multicov", shape=diamond];
+
+        s10p_merge_multicov -> merged_multicov;
+    }
+
+    subgraph subg_nqc {
+        s4_nqc [label="NQC", shape=box];
+
+        picard_metrics -> s4_nqc;
+        bedgraph_results -> s4_nqc;
+        fastqc -> s4_nqc;
+
+        nqc_results [label="nqc_results", shape=diamond];
+
+        s4_nqc -> nqc_results;
+    }
+
+}

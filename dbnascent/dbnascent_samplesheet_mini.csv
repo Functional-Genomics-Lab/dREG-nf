@@ -1,0 +1,5 @@
+sample,fastq_1,fastq_2
+Wang2020proapoptotic_MCF7_hydroxytamoxifen,./data/SRR10400218.fastq.gz,
+Wang2020proapoptotic_MCF7_hydroxytamoxifen,./data/SRR10400219.fastq.gz,
+Bi2020enhancer_MCF7_hydroxytamoxifen,./data/SRR8743268.fastq.gz,
+Wang2020increased_SRZ10466082_NSPC_NaN_REP1,./data/SRR10466082.fastq.gz,
