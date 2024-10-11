@@ -4,7 +4,7 @@ process MULTI_ALIGN {
     memory '32 GB'
 
     input:
-    tuple val(meta), val(aligner), path(reads), path(reference), val(reference_type)
+    tuple val(meta), val(aligner), path(reads), val(reference), val(reference_type)
     path indices
 
     output:
