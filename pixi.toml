@@ -16,10 +16,11 @@ cmd = [
 ]
 
 [tasks."run_dbnascent"]
+cwd = "dbnascent"
 cmd = [
     "nextflow",
     "run",
-    "main.nf",
+    "../main.nf",
     "--run_dreg",
 ]
 
