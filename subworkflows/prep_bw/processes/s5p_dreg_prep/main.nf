@@ -14,7 +14,7 @@ process DREG_PREP {
 
     script:
     def genome = params.fasta
-    def name = meta.id
+    def name = "${meta.id}.${meta.aligner}"
     """
     echo "Creating BigWigs suitable as inputs to dREG"
     
@@ -48,9 +48,17 @@ process DREG_PREP {
             > ${name}.neg.sort.bedGraph
             
     echo negative strand processed to bedGraph
-    
-    bedGraphToBigWig ${name}.pos.sort.bedGraph ${chrom_sizes} ${name}.pos.bw
-    bedGraphToBigWig ${name}.neg.sort.bedGraph ${chrom_sizes} ${name}.neg.bw
+
+    for strand in pos neg; do 
+        if [ -s ${name}.${strand}.sort.bedGraph ]; then
+            echo "Creating ${strand} strand bigwig"
+            bedGraphToBigWig ${name}.${strand}.sort.bedGraph ${chrom_sizes} ${name}.${strand}.bw
+        else
+            echo "${strand} strand bedGraph is empty. Creating stub bigwig"
+            touch ${name}.${strand}.bw
+            truncate -s 0 ${name}.${strand}.bw
+        fi
+    done
     
     echo bedGraph to bigwig done
     """

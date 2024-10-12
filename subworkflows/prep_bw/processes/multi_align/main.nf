@@ -15,6 +15,7 @@ process MULTI_ALIGN {
     def reverse_opt = reads.size() == 2 ? "--input-reverse ${reads[1]}" : ""
     def aligner = aligner.toLowerCase()
     def input_flag = reference_type == "genome" ? "--genome ${reference}" : "--index ${reference}"
+    meta.aligner = aligner
     
     """
     multi_align \
