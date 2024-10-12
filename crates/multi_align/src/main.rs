@@ -1,7 +1,7 @@
 use clap::Parser;
 use multi_align::{
     backends::{
-        bowtie2::{Bowtie2Args, Bowtie2Backend, Bowtie2IndexedFasta},
+        bowtie2::{self, Bowtie2Args, Bowtie2Backend, Bowtie2IndexedFasta},
         bwa_mem::{BwaMemArgs, BwaMemBackend, BwaMemIndexedFasta},
         hisat2::{Hisat2Args, Hisat2Backend, Hisat2Index},
     },
@@ -148,6 +148,8 @@ fn main() {
             backend
                 .exec(
                     Bowtie2Args::new()
+                        .local()
+                        .preset(bowtie2::Preset::VerySensitive)
                         .threads(args.threads)
                         .expect("Failed to set threads")
                         .genome_index(index)

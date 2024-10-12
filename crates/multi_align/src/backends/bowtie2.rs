@@ -118,15 +118,21 @@ impl AlignerParams for Bowtie2Args {
             cmd.arg("--mm");
         }
 
-        // seem to not mean what I think this means :(
-        /*
-        if !self.allow_spliced_alignments {
-            cmd.arg("--rdg")
-                .arg("10000,10000")
-                .arg("--rfg")
-                .arg("10000,10000");
+        let suffix = if self.local { "-local" } else { "" };
+        match self.preset {
+            Preset::VeryFast => {
+                cmd.arg(format!("--very-fast{}", suffix));
+            }
+            Preset::Fast => {
+                cmd.arg(format!("--fast{}", suffix));
+            }
+            Preset::Sensitive => {
+                cmd.arg(format!("--sensitive{}", suffix));
+            }
+            Preset::VerySensitive => {
+                cmd.arg(format!("--very-sensitive{}", suffix));
+            }
         }
-        */
 
         if let Some(output) = &self.output {
             cmd.arg("-S").arg(output);
