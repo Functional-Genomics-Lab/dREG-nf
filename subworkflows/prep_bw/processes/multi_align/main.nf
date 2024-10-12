@@ -1,4 +1,6 @@
 process MULTI_ALIGN {
+    publishDir "results/multi_align", mode: 'rellink'
+
     cpus 16
     time '4h'
     memory '32 GB'

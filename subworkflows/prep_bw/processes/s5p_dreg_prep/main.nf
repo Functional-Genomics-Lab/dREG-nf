@@ -50,13 +50,13 @@ process DREG_PREP {
     echo negative strand processed to bedGraph
 
     for strand in pos neg; do 
-        if [ -s ${name}.${strand}.sort.bedGraph ]; then
-            echo "Creating ${strand} strand bigwig"
-            bedGraphToBigWig ${name}.${strand}.sort.bedGraph ${chrom_sizes} ${name}.${strand}.bw
+        if [ -s "${name}.\${strand}.sort.bedGraph" ]; then
+            echo "Creating \${strand} strand bigwig"
+            bedGraphToBigWig "${name}.\${strand}.sort.bedGraph" "${chrom_sizes}" "${name}.\${strand}.bw"
         else
-            echo "${strand} strand bedGraph is empty. Creating stub bigwig"
-            touch ${name}.${strand}.bw
-            truncate -s 0 ${name}.${strand}.bw
+            echo "\${strand} strand bedGraph is empty. Creating stub bigwig"
+            touch "${name}.\${strand}.bw"
+            truncate -s 0 "${name}.\${strand}.bw"
         fi
     done
     

@@ -118,12 +118,15 @@ impl AlignerParams for Bowtie2Args {
             cmd.arg("--mm");
         }
 
+        // seem to not mean what I think this means :(
+        /*
         if !self.allow_spliced_alignments {
             cmd.arg("--rdg")
                 .arg("10000,10000")
                 .arg("--rfg")
                 .arg("10000,10000");
         }
+        */
 
         if let Some(output) = &self.output {
             cmd.arg("-S").arg(output);
