@@ -40,7 +40,7 @@ workflow PREP_BW {
         | map { it[1] } // strip off name and just pass the reads
         | FASTQC // -> { fastqc_results }
     
-    Channel.fromList([tuple(aligner: 'bwa-mem', index: fasta), tuple(aligner: 'bowtie2', index: fasta), tuple(aligner: 'hisat2', index: params.hisat_indices)])
+    Channel.fromList([tuple(aligner: 'bwa-mem', index: fasta), tuple(aligner: 'hisat2', index: params.hisat_indices)])
         | set { aligners }
 
     ch_fastq_trimmed.trimmed_reads
