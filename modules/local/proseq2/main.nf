@@ -23,9 +23,11 @@ process PROSEQ2 {
     task.ext.when == null || task.ext.when
 
     script:
-    prefix = task.ext.prefix ?: "${meta.id}"
+    mata.aligner = "proseq2.0"
+    prefix = task.ext.prefix ?: "${meta.id}.${meta.aligner}"
     def reads_command = meta.single_end ? "-SE" : "-PE"
     def required_se_options = meta.single_end ? assay_type == "GROseq" ? "-G" : "-P" : ""
+
     // TODO PE
     """
     INDEX=`find -L ./ -name "*.amb" | sed 's/\\.amb\$//'`
