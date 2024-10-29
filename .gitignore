@@ -7,3 +7,6 @@ tmp/
 .nf-test*
 work/
 results/
+target/
+.pixi
+*.egg-info

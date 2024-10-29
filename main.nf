@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 include { validateParameters; paramsHelp; paramsSummaryLog; fromSamplesheet } from 'plugin/nf-validation'
+include { PREP_BW } from './subworkflows/prep_bw/main.nf'
 
 // Print help message, supply typical command line usage for the pipeline
 if (params.help) {
@@ -63,15 +64,29 @@ workflow {
         ch_chromInfo = Channel.fromPath(file(params.chromInfo))
     }
 
-    PROSEQ2 (
-        ch_cat_fastq,
-        params.bwa_index,
-        ch_chromInfo,
-        params.assay_type,
-    )
+    if (params.prep_bw) {
+        PREP_BW (
+            ch_cat_fastq,
+            params.fasta,
+            params.fasta_indices,
+            ch_chromInfo
+        )
+        | set { ch_plus_minus_bw }
+    } else {
+        PROSEQ2 (
+            ch_cat_fastq,
+            params.bwa_index,
+            ch_chromInfo,
+            params.assay_type,
+        )
+        
+        PROSEQ2.out.plus_bigwig
+        | join (PROSEQ2.out.minus_bigwig, by: [0])
+        | set { ch_plus_minus_bw }
+    }
+
 
     if(params.run_dreg) {
-        ch_plus_minus_bw = PROSEQ2.out.plus_bigwig.join(PROSEQ2.out.minus_bigwig, by: [0])
         DREG_RUN (
             ch_plus_minus_bw,
             params.dreg_model,

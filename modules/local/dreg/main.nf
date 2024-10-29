@@ -17,7 +17,7 @@ process DREG_RUN {
     tuple val(meta), path("dREG_output_*"), emit: dREG
 
     script:
-    def prefix = "dREG_output_${meta.id}_"
+    def prefix = "dREG_output_${meta.id}_${meta.aligner}_"
     """
     /dREG/run_dREG.R \\
         ${pos_bw} \\
